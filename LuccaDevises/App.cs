@@ -1,4 +1,5 @@
-﻿using LuccaDevises.Model;
+﻿using LuccaDevises.Exception;
+using LuccaDevises.Model;
 using LuccaDevises.Service;
 
 namespace LuccaDevises
@@ -18,6 +19,15 @@ namespace LuccaDevises
             _parsingService = parsingService;
         }
 
+        /// <summary>
+        /// Runs the program:
+        /// <para>1. Parse the file</para>
+        /// <para>2. Build the list of exchange rates</para>
+        /// <para>3. Calculate the shortest path of exchange rates</para>
+        /// <para>4. Calculate the result and print it on the standard output</para>
+        /// </summary>
+        /// <param name="filepath">The file to process full path</param>
+        /// <exception cref="ShortestPathNotFoundException">If no path is found</exception>
         public void Run(string filepath)
         {
             _parsingService.Parse(filepath);
@@ -35,15 +45,15 @@ namespace LuccaDevises
             }
             else
             {
-                // throw
+                throw new ShortestPathNotFoundException();
             }
         }
 
         /// <summary>
         /// Calculate the result and write it into the console.
         /// </summary>
-        /// <param name="amountToConvert"></param>
-        /// <param name="shortestPath"></param>
+        /// <param name="amountToConvert">The money amount to convert</param>
+        /// <param name="shortestPath">The shortest exchange rate path</param>
         private static void ProcessResult(int amountToConvert, Stack<decimal> shortestPath)
         {
             decimal res = amountToConvert;

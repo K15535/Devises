@@ -33,8 +33,8 @@ namespace LuccaDevises.Service
 
             CreatePaths(rootNode);
 
-            if (this._possiblePaths.Count > 0)
-                return this._possiblePaths.MinBy(x => x.Count);
+            if (_possiblePaths.Count > 0)
+                return _possiblePaths.MinBy(x => x.Count);
 
             return null;
         }
@@ -78,7 +78,7 @@ namespace LuccaDevises.Service
         /// <summary>
         /// Create a path of exchange rates from the current node up to the root node represented as a stack.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">The targetted currency node</param>
         /// <returns>A stack of decimal values, each decimal value being an exchange rate.</returns>
         private static Stack<decimal> CreatePath(Node node)
         {

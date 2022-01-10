@@ -1,4 +1,6 @@
-﻿namespace LuccaDevises.Service
+﻿using LuccaDevises.Exception;
+
+namespace LuccaDevises.Service
 {
     public class ParsingService : IParsingService
     {
@@ -13,11 +15,13 @@
         /// <param name="filepath">The file to parse path</param>
         public void Parse(string filepath)
         {
-            // TODO : check if file exists
+            if (!File.Exists(filepath))
+                throw new FileNotFoundException();
 
             List<string> fileLines = File.ReadLines(filepath).ToList();
 
-            // TODO : check if fileLines.count > 2
+            if (fileLines.Count <= 2)
+                throw new FileMissingLinesException();
 
             string[] conversionGoalDataArray = fileLines[0].Split(';');
             // TODO : check if conversionGoalDataArray length == 3
