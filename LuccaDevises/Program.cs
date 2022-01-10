@@ -1,13 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using LuccaDevises.Service;
+using Microsoft.Extensions.DependencyInjection;
 
-using LuccaDevises.Builder;
-using LuccaDevises.Model;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-
-namespace MyApp // Note: actual namespace depends on the project name.
+namespace LuccaDevises
 {
     public class Program
     {
@@ -15,33 +9,29 @@ namespace MyApp // Note: actual namespace depends on the project name.
         {
             // TODO : Check args
 
+            ServiceCollection services = new ServiceCollection();
+            ConfigureServices(services);
+            App? app = services.AddSingleton<App, App>().BuildServiceProvider().GetService<App>();
 
-            IEnumerable<string> fileContent = File.ReadLines(args[0]);
-
-            string[] conversionGoalData = fileContent.ElementAt(0).Split(';');
-            string sourceCurrencyCode = conversionGoalData[0];
-            string targetCurrencyCode = conversionGoalData[2];
-            int initialAmount = int.Parse(conversionGoalData[1]);
-            int exchangeRatesQuantity = int.Parse(fileContent.ElementAt(1));
-
-            List<ExchangeRate> exchangeRates = new List<ExchangeRate>();
-            List<string> currenciesConversions = fileContent.Skip(2).ToList();
-            foreach (string currenciesConversion in currenciesConversions)
+            try
             {
-                string[] conversionData = currenciesConversion.Split(';');
-                exchangeRates.Add(new ExchangeRate
-                {
-                    sourceCurrency = conversionData[0],
-                    targetCurrency = conversionData[1],
-                    exchangeRateValue = Decimal.Parse(conversionData[2], CultureInfo.InvariantCulture)
-                });
+                // TODO : if app null throw exception
+                
+                app.Run(args[0]);
             }
+            catch (Exception ex)
+            {
 
-            PathsBuilder pathsBuilder = new PathsBuilder(sourceCurrencyCode, targetCurrencyCode, exchangeRates);
-            List<Stack<decimal>> possiblePaths = pathsBuilder.GetPaths();
+            }
+            // TODO : Catch and filter all specific exceptions
+        }
 
-            Console.WriteLine("End");
-            Console.ReadKey();
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services
+                .AddSingleton<IPathService, PathService>()
+                .AddSingleton<IExchangeRateService, ExchangeRateService>()
+                .AddSingleton<IParsingService, ParsingService>();
         }
     }
 }
