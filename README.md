@@ -29,3 +29,6 @@ LuccaDevises/bin/Release/net6.0/publish/LuccaDevises.exe PATH_TO_FILE
 
 ## Program details
 .NET 6 / C# 10
+
+## Tests
+Very basic and straightforward service unit testing using NUnit
