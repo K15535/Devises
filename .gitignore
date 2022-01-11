@@ -4,3 +4,7 @@ LuccaDevises/obj
 LuccaDevises/obj/*
 LuccaDevises/bin/Debug
 LuccaDevises/bin/Debug/*
+LuccaDevises.Tests/obj
+LuccaDevises.Tests/obj/*
+LuccaDevises.Tests/bin
+LuccaDevises.Tests/bin/*
