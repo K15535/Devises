@@ -1,4 +1,5 @@
 ﻿using LuccaDevises.Exception;
+using System.Text.RegularExpressions;
 
 namespace LuccaDevises.Service
 {
@@ -21,35 +22,26 @@ namespace LuccaDevises.Service
             List<string> fileLines = File.ReadLines(filepath).ToList();
 
             if (fileLines.Count <= 2)
-                throw new FileMissingLinesException();
+                throw new DataFormatException(message: $"Incorrect amount of lines in file : {fileLines.Count} < 3");
+
+            if (!Regex.IsMatch(fileLines[0], @"\b[A-Z]{3};[0-9]+;[A-Z]{3}\b"))
+                throw new DataFormatException(message: $"Incorrect conversion goal format : {fileLines[0]}");
 
             string[] conversionGoalDataArray = fileLines[0].Split(';');
-            // TODO : check if conversionGoalDataArray length == 3
 
-            // TODO : check if conversionGoalDataArray[0] && conversionGoalDataArray[2] are LLL
             _sourceCurrency = conversionGoalDataArray[0];
             _targetCurrency = conversionGoalDataArray[2];
-
             if (int.TryParse(conversionGoalDataArray[1], out int amountToConvert))
-            {
                 _amountToConvert = amountToConvert;
-            }
             else
-            {
-                // throw
-            }
+                throw new DataFormatException(message: $"Incorrect amount to convert format : {amountToConvert}");
 
             if (!int.TryParse(fileLines[1], out int exchangeRatesQuantity))
-            {
-                // throw
-            }
+                throw new DataFormatException(message: $"Incorrect amount of exchange rates format : {fileLines[1]}");
 
             _exchangeRatesLines = fileLines.Skip(2).ToList();
-
             if (_exchangeRatesLines.Count != exchangeRatesQuantity)
-            {
-                // throw
-            }
+                throw new DataFormatException(message: $"Mismatch between amount of exchange rates [{exchangeRatesQuantity}] and exchange rates lines [{_exchangeRatesLines.Count}]");
         }
 
         /// <summary>

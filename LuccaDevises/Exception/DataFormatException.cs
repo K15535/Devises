@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace LuccaDevises.Exception
 {
-    public class FileMissingLinesException : System.Exception
+    public class DataFormatException : System.Exception
     {
-        public FileMissingLinesException()
-        {
-
-        }
+        public DataFormatException(string message) : base(message) { }
     }
 }

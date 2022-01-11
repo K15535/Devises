@@ -27,9 +27,9 @@ namespace LuccaDevises
             }
             catch (NullServiceException ex)
             {
-                Console.Error.WriteLine("Error while setting up dependency injection");
+                Console.Error.WriteLine("Error while building the service provider");
             }
-            catch (IncorrectExchangeRateDataFormatException ex)
+            catch (DataFormatException ex)
             {
                 Console.Error.WriteLine(ex.Message);
             }
@@ -37,16 +37,11 @@ namespace LuccaDevises
             {
                 Console.Error.WriteLine($"{args[0]} not found");
             }
-           catch (FileMissingLinesException ex)
-            {
-                Console.Error.WriteLine("File is missing lines");
-            }
             catch (System.Exception ex)
             {
                 Console.Error.WriteLine("Unprocessed exception:");
                 Console.Error.WriteLine(ex.ToString());
             }
-            // TODO : Catch and filter all specific exceptions
         }
 
         /// <summary>

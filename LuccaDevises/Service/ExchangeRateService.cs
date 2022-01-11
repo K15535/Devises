@@ -10,8 +10,8 @@ namespace LuccaDevises.Service
         /// <summary>
         /// Generate a list of <see cref="ExchangeRate"/> from the lines extracted from the input file.
         /// </summary>
-        /// <param name="exchangeRatesLines"></param>
-        /// <returns>A list of <see cref="ExchangeRate"/></returns>
+        /// <param name="exchangeRatesLines">Exchange rate line extracted from the file, format LLL;LLL;N.NNNN</param>
+        /// <returns>A list of <see cref="ExchangeRate"/>A list of object describing an exchange rate</returns>
         public List<ExchangeRate> GetExchangeRatesFromFileData(List<string> exchangeRatesLines)
         {
             List<ExchangeRate> exchangeRates = new List<ExchangeRate>();
@@ -20,49 +20,16 @@ namespace LuccaDevises.Service
             {
                 string[] exchangeRateData = exchangeRateLine.Split(';');
 
-                if (!IsExchangeRateFormatCorrect(exchangeRateData))
-                    throw new IncorrectExchangeRateDataFormatException(message: $"Incorrect exchange rate format for {exchangeRateLine}");
+                if (!Regex.IsMatch(exchangeRateLine, @"\b[A-Z]{3};[A-Z]{3};[0-9]+\.[0-9]{4}\b"))
+                    throw new DataFormatException(message: $"Incorrect exchange rate format : {exchangeRateLine}");
 
-                exchangeRates.Add(new ExchangeRate(exchangeRateData[0], exchangeRateData[1], Decimal.Parse(exchangeRateData[2], CultureInfo.InvariantCulture)));
+                if (!decimal.TryParse(exchangeRateData[2], NumberStyles.Float, CultureInfo.InvariantCulture, out decimal exchangeRateValue))
+                    throw new DataFormatException(message: $"Incorrect exchange rate value : {exchangeRateLine}");
+
+                exchangeRates.Add(new ExchangeRate(exchangeRateData[0], exchangeRateData[1], exchangeRateValue));
             }
 
             return exchangeRates;
-        }
-
-        /// <summary>
-        /// Check if the given exchange rate line is formatted like LLL;LLL;N.NNNN
-        /// </summary>
-        /// <param name="exchangeRateData">An array containing the exchange rate line data</param>
-        /// <exception cref="IncorrectExchangeRateDataFormatException">If the exchange rate is not well formatted</exception>
-        private static bool IsExchangeRateFormatCorrect(string[] exchangeRateData)
-        {
-            return exchangeRateData.Length == 3
-                && Regex.IsMatch(exchangeRateData[0], @"\b[a-zA-Z]{3}\b")
-                && Regex.IsMatch(exchangeRateData[1], @"\b[a-zA-Z]{3}\b")
-                && decimal.TryParse(exchangeRateData[2], NumberStyles.Float, CultureInfo.InvariantCulture, out decimal value)
-                && ExchangeRateNumberIsWellFormatted(exchangeRateData[2]);
-        }
-
-        /// <summary>
-        /// Check the exchange rate format : N.NNNN
-        /// </summary>
-        /// <param name="exchangeRate">The exchange rate value extracted from the line</param>
-        /// <returns>True if well formatted</returns>
-        private static bool ExchangeRateNumberIsWellFormatted(string exchangeRate)
-        {
-            if (!exchangeRate.Contains('.'))
-            {
-                return false;
-            }
-            else
-            {
-                string[] splittedDecimal = exchangeRate.Split('.');
-
-                if (splittedDecimal.Length != 2 || splittedDecimal[1].Length != 4)
-                    return false;
-            }
-
-            return true;
         }
     }
 }
