@@ -2,5 +2,5 @@
 .vs/*
 LuccaDevises/obj
 LuccaDevises/obj/*
-LuccaDevises/bin
-LuccaDevises/bin/*
+LuccaDevises/bin/Debug
+LuccaDevises/bin/Debug/*
